@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="icons/manage.svg">resources/icons/manage.svg</file>
+        <file alias="icons/settings.svg">resources/icons/settings.svg</file>
+        <file alias="icons/quit.svg">resources/icons/quit.svg</file>
+        <file alias="icons/add_file.svg">resources/icons/add_file.svg</file>
+        <file alias="icons/add_folder.svg">resources/icons/add_folder.svg</file>
+        <file alias="icons/add_url.svg">resources/icons/add_url.svg</file>
+        <file alias="icons/new_group.svg">resources/icons/new_group.svg</file>
+        <file alias="icons/move_up.svg">resources/icons/move_up.svg</file>
+        <file alias="icons/move_down.svg">resources/icons/move_down.svg</file>
+        <file alias="icons/edit.svg">resources/icons/edit.svg</file>
+        <file alias="icons/delete.svg">resources/icons/delete.svg</file>
+        <file alias="icons/empty_state.svg">resources/icons/empty_state.svg</file>
+    </qresource>
+</RCC>

@@ -18,16 +18,9 @@ void run()
     const QString path = dir + "/config.json";
     ConfigStore store(path);
 
-    QuickItem program;
-    program.name = QStringLiteral("画图");
-    program.target = QStringLiteral("C:/Windows/System32/mspaint.exe");
-    program.type = TargetType::Program;
-    QuickItem script;
-    script.name = QStringLiteral("测试脚本");
-    script.target = dir + "/hello.bat";
-    script.type = TargetType::Script;
-    store.addItem(program);
-    store.addItem(script);
+    store.addItem(QStringLiteral("画图"),
+                  QStringLiteral("C:/Windows/System32/mspaint.exe"), TargetType::Program);
+    store.addItem(QStringLiteral("测试脚本"), dir + "/hello.bat", TargetType::Script);
     store.setBallPosition(QPoint(123, 456));
     store.save();
 

@@ -1,4 +1,4 @@
-﻿# 手工用例测试资产准备脚本（对应 spec/main_test_cases.md 通用前置条件 P3）
+﻿﻿# 手工用例测试资产准备脚本（对应 spec/main_test_cases.md 通用前置条件 P3）
 # 用法：在 PowerShell 中执行  .\setup_test_assets.ps1
 # 创建 %TEMP%\floaty_test\ 及其中全部测试资产；重复执行会先清空重建，保证可复用。
 
@@ -27,9 +27,19 @@ $lnk = $shell.CreateShortcut((Join-Path $root "test.lnk"))
 $lnk.TargetPath = Join-Path $env:SystemRoot "System32\mspaint.exe"
 $lnk.Save()
 
-# 白名单外类型资产（TC-F4-05 用）
+# 白名单外类型资产（TC-F4-05 / F16 拖放拒绝用）
 Set-Content -Path (Join-Path $root "test.reg") -Value "Windows Registry Editor Version 5.00" -Encoding ASCII
 Set-Content -Path (Join-Path $root "test.ps1") -Value "Write-Host test" -Encoding ASCII
+
+# F12 长名称资产：名称宽度超过面板最大宽度，用于自适应与跑马灯人工/自动核对
+$longName = ("超长快捷项名称" * 6) + ".txt"
+Set-Content -Path (Join-Path $root $longName) -Value "long name item" -Encoding ASCII
+
+# F16 拖放资产：三个合法文本与一个白名单外文件
+Set-Content -Path (Join-Path $root "drop1.txt") -Value "drop one" -Encoding ASCII
+Set-Content -Path (Join-Path $root "drop2.txt") -Value "drop two" -Encoding ASCII
+Set-Content -Path (Join-Path $root "drop3.txt") -Value "drop three" -Encoding ASCII
+Set-Content -Path (Join-Path $root "drop_bad.reg") -Value "Windows Registry Editor Version 5.00" -Encoding ASCII
 
 # 清理上次运行残留的脚本标记
 $marker = Join-Path $env:TEMP "floaty_marker.txt"

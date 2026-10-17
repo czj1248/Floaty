@@ -3,6 +3,10 @@
 #include <QString>
 #include <optional>
 
+// 默认分组标识：内置分组，不可删除、不可重命名，始终排在最前
+inline constexpr const char* kDefaultGroupId = "default";
+inline const QString kDefaultGroupName = QStringLiteral("默认分组");
+
 // 快捷项目标类型，对应 spec F4 的类型白名单
 enum class TargetType {
     Program,    // 程序：.exe .lnk
@@ -14,9 +18,19 @@ enum class TargetType {
 
 // 一个快捷项：展开面板与管理窗口中的同一条数据
 struct QuickItem {
+    QString id;        // 唯一标识，V2 用于排序与归属变更
     QString name;      // 显示名称
     QString target;    // 本地文件/文件夹路径，或 http(s) 网址
-    TargetType type;   // 目标类型
+    TargetType type = TargetType::Document;
+    QString groupId = QLatin1String(kDefaultGroupId); // 所属分组
+    int order = 0;     // 组内顺序，从 0 起
+};
+
+// 分组：默认分组受保护
+struct QuickGroup {
+    QString id;
+    QString name;
+    bool protectedGroup = false;
 };
 
 // 类型中文名，用于界面提示

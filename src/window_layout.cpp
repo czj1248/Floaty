@@ -1,5 +1,7 @@
 #include "window_layout.h"
 
+#include <algorithm>
+
 namespace window_layout {
 
 QPoint calcPanelTopLeft(const QRect& ball, const QSize& panel, const QRect& screen, int gap)
@@ -51,6 +53,66 @@ QPoint defaultBallTopLeft(const QSize& ball, const QRect& screen)
     const int x = screen.right() + 1 - ball.width() - 60;
     const int y = screen.center().y() - ball.height() / 2;
     return clampBallTopLeft(QPoint(x, y), ball, screen);
+}
+
+QPoint snapToEdge(const QPoint& pos, const QSize& ball, const QRect& screen,
+                  int threshold, int gap)
+{
+    QPoint result = pos;
+    const int leftDist = pos.x() - screen.left();
+    const int rightDist = screen.right() + 1 - (pos.x() + ball.width());
+    const int topDist = pos.y() - screen.top();
+    const int bottomDist = screen.bottom() + 1 - (pos.y() + ball.height());
+
+    // 水平方向：离哪边近且进入阈值范围就吸附哪边，中部保持不动
+    if (leftDist <= threshold) {
+        result.setX(screen.left() + gap);
+    } else if (rightDist <= threshold) {
+        result.setX(screen.right() + 1 - ball.width() - gap);
+    }
+    // 竖直方向独立判定，与水平组合即四角吸附
+    if (topDist <= threshold) {
+        result.setY(screen.top() + gap);
+    } else if (bottomDist <= threshold) {
+        result.setY(screen.bottom() + 1 - ball.height() - gap);
+    }
+    return result;
+}
+
+int calcPanelWidth(int contentWidth, int minWidth, int maxWidth)
+{
+    constexpr int kHorizontalPadding = 12; // 容器左右各 12px
+    return std::clamp(contentWidth + kHorizontalPadding * 2, minWidth, maxWidth);
+}
+
+int rowTextAvailableWidth(int panelWidth, int iconWidth)
+{
+    constexpr int kHorizontalPadding = 12; // 容器左右各 12px
+    constexpr int kRowEdge = 2;           // 行左右各 2px 边距
+    constexpr int kIconTextGap = 8;
+    return panelWidth - kHorizontalPadding * 2 - kRowEdge * 2 - iconWidth - kIconTextGap;
+}
+
+bool needMarquee(int textWidth, int availableWidth)
+{
+    return textWidth > availableWidth;
+}
+
+int screenIndexAt(const QList<QRect>& screens, const QPoint& globalPos)
+{
+    int result = -1;
+    long bestArea = 0;
+    for (int i = 0; i < screens.size(); ++i) {
+        if (screens.at(i).contains(globalPos)) {
+            const long area = static_cast<long>(screens.at(i).width()) * screens.at(i).height();
+            // 屏幕边缘可能重叠，取包含该点的最小屏幕
+            if (result == -1 || area < bestArea) {
+                result = i;
+                bestArea = area;
+            }
+        }
+    }
+    return result;
 }
 
 } // namespace window_layout
