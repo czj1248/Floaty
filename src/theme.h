@@ -19,10 +19,6 @@ inline const QColor kBorder{0xD6, 0xE2, 0xDB};         // 描边
 inline const QColor kDanger{0xC0, 0x50, 0x4D};         // 危险色
 inline const QColor kWhite{0xFF, 0xFF, 0xFF};
 
-// 球体渐变两端
-inline const QColor kBallHighlight{0x7C, 0xC9, 0xA9};
-inline const QColor kBallBody{0x2E, 0x8B, 0x6B};
-
 // 字号
 constexpr int kFontSizeBody = 9;     // 面板、菜单、列表正文（pt）
 constexpr int kFontSizeTitle = 12;   // 品牌头主行（pt）

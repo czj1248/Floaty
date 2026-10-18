@@ -160,8 +160,10 @@ protected:
         p.setFont(f);
         p.setPen(theme::kPrimary);
         const QFontMetrics fm(f);
+        // 超过行可用宽度的标题以尾部省略号截断（F12：标题不做跑马灯）
+        const QString shown = fm.elidedText(m_name, Qt::ElideRight, width() - 4);
         const int y = (height() - fm.height()) / 2 + fm.ascent();
-        p.drawText(QPoint(2, y), m_name);
+        p.drawText(QPoint(2, y), shown);
     }
 
 private:
