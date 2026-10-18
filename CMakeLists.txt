@@ -33,11 +33,13 @@ set(FLOATY_UI_SOURCES
 
 qt_add_resources(FLOATY_RESOURCES src/resources.qrc)
 
+# exe 文件图标：resources/app.ico 由 make_icon 工具按 ball_logo 同源渲染生成
 add_executable(Floaty WIN32
     src/main.cpp
     ${FLOATY_CORE_SOURCES}
     ${FLOATY_UI_SOURCES}
     ${FLOATY_RESOURCES}
+    resources/floaty.rc
 )
 target_include_directories(Floaty PRIVATE src)
 # MSVC 源码与执行字符集统一为 UTF-8，保证中文字符串正确
@@ -86,6 +88,12 @@ target_include_directories(FloatyTests PRIVATE src test)
 target_compile_options(FloatyTests PRIVATE /utf-8)
 target_link_libraries(FloatyTests PRIVATE Qt6::Widgets)
 add_test(NAME FloatyTests COMMAND FloatyTests)
+
+# 图标生成工具：渲染叶形 Logo 生成多分辨率 resources/app.ico（Logo 变更后手动重跑）
+add_executable(make_icon tools/make_icon/main.cpp src/ball_logo.cpp)
+target_include_directories(make_icon PRIVATE src)
+target_compile_options(make_icon PRIVATE /utf-8)
+target_link_libraries(make_icon PRIVATE Qt6::Gui)
 
 # 构建后用 windeployqt 部署 Qt 运行库，形成绿色免安装目录
 get_filename_component(QT_BIN_DIR "${CMAKE_PREFIX_PATH}" PATH)
