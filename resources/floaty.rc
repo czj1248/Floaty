@@ -1,1 +1,38 @@
+// 浮启 Floaty 可执行文件资源：文件图标 + 版本信息
+// 中文按 UTF-8 读取（MSVC rc 支持 code_page 65001）
+#include <windows.h>
+
+#pragma code_page(65001)
+
 IDI_ICON1 ICON DISCARDABLE "app.ico"
+
+#define VER_NUM 2,3,0,0
+#define VER_STR "2.3.0\0"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     VER_NUM
+PRODUCTVERSION  VER_NUM
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+FILEFLAGS       0
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "CompanyName",      "Floaty"
+            VALUE "FileDescription",  "浮启 Floaty - 桌面悬浮窗启动器"
+            VALUE "FileVersion",      VER_STR
+            VALUE "InternalName",     "Floaty.exe"
+            VALUE "OriginalFilename", "Floaty.exe"
+            VALUE "ProductName",      "浮启 Floaty"
+            VALUE "ProductVersion",   VER_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
