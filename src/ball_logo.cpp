@@ -58,7 +58,15 @@ QPainterPath buildStemPath()
 
 } // namespace
 
-void paintBallLogo(QPainter* p, const QRectF& rect)
+// 颜色线性插值：t=0 取 a，t=1 取 b
+static QColor lerpColor(const QColor& a, const QColor& b, qreal t)
+{
+    return QColor::fromRgbF(a.redF() + (b.redF() - a.redF()) * t,
+                            a.greenF() + (b.greenF() - a.greenF()) * t,
+                            a.blueF() + (b.blueF() - a.blueF()) * t);
+}
+
+void paintBallLogo(QPainter* p, const QRectF& rect, qreal hover)
 {
     p->save();
     p->setRenderHint(QPainter::Antialiasing);
@@ -71,21 +79,25 @@ void paintBallLogo(QPainter* p, const QRectF& rect)
 
     p->setPen(Qt::NoPen);
 
-    // 叶片：叶根深绿 -> 中部竹绿 -> 叶尖浅绿
+    // 叶片：叶根深绿 -> 中部竹绿 -> 叶尖浅绿；hover 时整体向浅绿偏移
+    const QColor leafRoot = lerpColor(QColor(0x1E, 0x5F, 0x44), QColor(0x3A, 0xA4, 0x7E), hover);
+    const QColor leafMid  = lerpColor(QColor(0x2E, 0x8B, 0x6B), QColor(0x55, 0xBD, 0x95), hover);
+    const QColor leafTip  = lerpColor(QColor(0x8A, 0xD3, 0xA8), QColor(0xB4, 0xE6, 0xCB), hover);
     QLinearGradient leafGrad(QPointF(11.5, 38.5), QPointF(37.8, 10.0));
-    leafGrad.setColorAt(0.0, QColor(0x1E, 0x5F, 0x44));
-    leafGrad.setColorAt(0.45, QColor(0x2E, 0x8B, 0x6B));
-    leafGrad.setColorAt(1.0, QColor(0x8A, 0xD3, 0xA8));
+    leafGrad.setColorAt(0.0, leafRoot);
+    leafGrad.setColorAt(0.45, leafMid);
+    leafGrad.setColorAt(1.0, leafTip);
     p->setBrush(leafGrad);
     p->drawPath(buildLeafPath());
 
     // 梗：叶尖->柄端方向渐变，0%~66% 恒定纯白，66%~92% 根部区域渐变为深绿，
-    // 92% 以后（叶外短柄）恒定深绿，保证浅色背景下短柄可见
+    // 92% 以后（叶外短柄）恒定深绿，保证浅色背景下短柄可见；
+    // 深绿端与叶根同色，hover 时随叶根同步变浅
     QLinearGradient stemGrad(QPointF(36.5, 10.5), QPointF(8.8, 41.6));
     stemGrad.setColorAt(0.0, QColor(0xFF, 0xFF, 0xFF));
     stemGrad.setColorAt(0.66, QColor(0xFF, 0xFF, 0xFF));
-    stemGrad.setColorAt(0.92, QColor(0x1E, 0x5F, 0x44));
-    stemGrad.setColorAt(1.0, QColor(0x1E, 0x5F, 0x44));
+    stemGrad.setColorAt(0.92, leafRoot);
+    stemGrad.setColorAt(1.0, leafRoot);
     p->setBrush(stemGrad);
     p->drawPath(buildStemPath());
 

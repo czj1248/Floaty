@@ -8,7 +8,9 @@ class ConfigStore;
 class ExpandPanel;
 class ManagerDialog;
 class SettingsDialog;
+class QEnterEvent;
 class QScreen;
+class QVariantAnimation;
 
 // 悬浮球（F1/F6/F7/F13/F14/F15/F16）：无边框置顶小窗口，不抢键盘焦点；
 // 左键单击切换展开面板，左键按住拖动（松开贴边吸附），右键三项菜单；
@@ -30,6 +32,8 @@ protected:
     void dragEnterEvent(QDragEnterEvent* event) override;
     void dragLeaveEvent(QDragLeaveEvent* event) override;
     void dropEvent(QDropEvent* event) override;
+    void enterEvent(QEnterEvent* event) override;
+    void leaveEvent(QEvent* event) override;
 
 private:
     void togglePanel();
@@ -53,6 +57,10 @@ private:
     QPoint m_pressWindowPos;  // 按下时窗口左上角全局坐标
 
     bool m_dropHover = false; // 拖放悬停：主色描边高亮
+
+    // 悬停高亮动画：0=常态，1=完全高亮（浅绿）
+    qreal m_hoverProgress = 0.0;
+    QVariantAnimation* m_hoverAnim = nullptr;
 
     QPoint m_settingsOpenPos; // 设置对话框打开时的球位置（取消还原用）
 };

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QtGlobal>
+
 class QIcon;
 class QPainter;
 class QRectF;
@@ -10,7 +12,8 @@ class QRectF;
 namespace ball_logo {
 
 // 在指定矩形内绘制完整品牌图形（矩形应为正方形）
-void paintBallLogo(QPainter* painter, const QRectF& rect);
+// hover 取值 0~1：0 为常态，1 为悬停高亮（叶片渐变为浅绿）
+void paintBallLogo(QPainter* painter, const QRectF& rect, qreal hover = 0.0);
 
 // 由品牌图形生成的多尺寸窗口/应用图标（16/24/32/48）
 QIcon brandIcon();

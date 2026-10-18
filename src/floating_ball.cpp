@@ -6,6 +6,7 @@
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
 #include <QDropEvent>
+#include <QEnterEvent>
 #include <QGuiApplication>
 #include <QMenu>
 #include <QMouseEvent>
@@ -14,6 +15,7 @@
 #include <QScreen>
 #include <QTimer>
 #include <QUrl>
+#include <QVariantAnimation>
 
 #include "ball_logo.h"
 #include "config_store.h"
@@ -66,9 +68,9 @@ void FloatingBall::paintEvent(QPaintEvent* /*event*/)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
 
-    // F7：品牌图形与管理窗口品牌头同源
+    // F7：品牌图形与管理窗口品牌头同源；m_hoverProgress 驱动悬停浅绿高亮
     const QRectF r = rect().adjusted(2.0, 2.0, -2.0, -2.0);
-    ball_logo::paintBallLogo(&p, r);
+    ball_logo::paintBallLogo(&p, r, m_hoverProgress);
 
     // F16：拖放悬停时主色描边高亮
     if (m_dropHover) {
@@ -190,6 +192,38 @@ void FloatingBall::dropEvent(QDropEvent* event)
     if (quickAddPaths(this, m_store, paths, QString::fromLatin1(kDefaultGroupId))
         && m_panel->isVisible()) {
         m_panel->reload();
+    }
+}
+
+void FloatingBall::enterEvent(QEnterEvent* event)
+{
+    QWidget::enterEvent(event);
+    // 悬停进入：叶片渐变为浅绿高亮
+    if (!m_hoverAnim) {
+        m_hoverAnim = new QVariantAnimation(this);
+        m_hoverAnim->setDuration(160);
+        m_hoverAnim->setEasingCurve(QEasingCurve::OutCubic);
+        connect(m_hoverAnim, &QVariantAnimation::valueChanged, this,
+                [this](const QVariant& v) {
+                    m_hoverProgress = v.toReal();
+                    update();
+                });
+    }
+    m_hoverAnim->stop();
+    m_hoverAnim->setStartValue(m_hoverProgress);
+    m_hoverAnim->setEndValue(1.0);
+    m_hoverAnim->start();
+}
+
+void FloatingBall::leaveEvent(QEvent* event)
+{
+    QWidget::leaveEvent(event);
+    // 悬停离开：渐变回常态
+    if (m_hoverAnim) {
+        m_hoverAnim->stop();
+        m_hoverAnim->setStartValue(m_hoverProgress);
+        m_hoverAnim->setEndValue(0.0);
+        m_hoverAnim->start();
     }
 }
 
